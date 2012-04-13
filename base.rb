@@ -21,18 +21,25 @@ conn = Fog::Compute.new({
 
 
 # List all servers (VMs)
-# including templates but not snapshots
 #
-conn.servers.all :include_templates => true, 
-                 :name_matches => "Ubuntu",
-                 :include_snapshots => false
+conn.servers.all 
+
+# List servers matching Ubuntu
+conn.servers.all :name_matches => "Ubuntu"
 
 #
 # First server available
 #
 # Templates aren't included by default
 # in listing
-server = conn.servers.all.first
+server = conn.servers.first
+
+#
+# List custom templates
+custom = conn.servers.custom_templates
+#
+# List built-in templates
+built_in = conn.servers.builtin_templates
 
 #
 # Get server VIFs
@@ -47,7 +54,7 @@ conn.hosts
 
 #
 # Listing Storage Repositories (Xen SRs)
-conn.storage_repositories.all
+conn.storage_repositories
 
 #
 # XenServer Pools
@@ -55,9 +62,9 @@ conn.storage_repositories.all
 conn.pools
 
 # Default Storage repository in a Pool
-conn.pools.all.first.default_sr
+conn.pools.first.default_sr
 # or
-# conn.pools.all.first.default_storage_repository
+# conn.pools.first.default_storage_repository
 
 #
 # Create server from template
@@ -77,7 +84,7 @@ vm = conn.servers.create :name => 'foobar2',
 # If you don't want to automatically start the server
 #vm = conn.servers.new    :name => 'foobar',
 #                         :template_name => 'test_template'
-## Saving will start it
+## Saving will start it unless :auto_start => false
 #vm.save(:auto_start => false)
 
 #
@@ -99,7 +106,7 @@ end
 conn.vdis.all
 
 #
-# Force shutdown
+# Force server shutdown
 vm.stop 'hard'
 # vm.hard_shutdown is equivalent
 
@@ -108,6 +115,8 @@ vm.stop 'hard'
 vm.stop 'clean'
 # also vm.clean_shutdown
 
-# Destroy the foobar2  VM
+#
+# Destroy the foobar2 VM
+# Shutdown hard it first if running
 vm.destroy
 

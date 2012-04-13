@@ -12,26 +12,15 @@ conn = Fog::Compute.new({
 })
 
 #
-# A Fog::Compute::XenServer::Server 
-# is a XenServer VM 
-#
-# a Fog::Compute::XenServer::Host
-# is a Hypervisor
-#
-
-
-#
-# List all servers (VMs) templates
+# List built-in server (VMs) templates
 # excluding custom templates
-servers = conn.servers.all(:include_templates => true,          # false by default
-                           :include_custom_templates => false)   # false by default
-builtin_templates = servers.delete_if { |s| !s.is_a_template }
-
+servers = conn.servers.builtin_templates
 #
 # All the "custom" templates, i.e. created by us.
-servers = conn.servers.all(:include_templates => false,        # false by default
-                           :include_custom_templates => true) # false by default
-custom_templates = servers.delete_if { |s| !s.is_a_template }
+custom_templates = servers.custom_templates
+
+#
+# Templates are Servers too, they have all the attributes
 # Print the names
 custom_templates.each do |t|
   puts t.name
